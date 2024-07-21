@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { MainHeader } from "./Header";
 import { Block1 } from "./Blocks/Block1";
 
-
 const Container = styled.div`
     width: 1000px;
     margin: 0 auto;
@@ -18,10 +17,11 @@ const Container = styled.div`
 
 
 export const MainIndex = () => {
-    return(
+
+    return (
         <Container>
-            <MainHeader/>
-            <Block1/>
+            <MainHeader />
+            <Block1 />
         </Container>
     )
 }

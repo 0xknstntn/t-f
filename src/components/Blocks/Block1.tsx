@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import Sticker from '../../assets/Gif/Sticker 4.gif'
+import { useAbility } from "../../store/useAbility";
+import { SendTransactionRequest, useTonAddress, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 
 const Container = styled.div`
     width: 100%;
@@ -63,6 +65,18 @@ const Descriprion = styled.h1`
     }
 `
 
+const DescriprionMini = styled.h1`
+    color: #c7c8cd;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 15px;
+    @media (max-width: 500px) {
+        font-size: 20px;
+    }
+`
+
+
 const Button = styled.button`
     padding: 10px 60px;
     background: #027bfe;
@@ -80,6 +94,24 @@ const Button = styled.button`
     }
 `
 
+const InactiveButton = styled.button`
+    padding: 10px 60px;
+    background: #757575;
+    border-radius: 30px;
+    outline: none;
+    border: none;
+    margin-top: 30px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    &:active{
+        transform: scale(0.98);
+    }
+    @media (max-width: 500px) {
+        padding: 9px 55px;
+    }
+`
+
+
 const Link = styled.a`
     font-size: 20px;
     color: #fff;
@@ -91,6 +123,41 @@ const Link = styled.a`
 `
 
 export const Block1 = () => {
+    const [ability, setAbility] = useAbility();
+    const userFriendlyAddress = useTonAddress();
+	const wallet = useTonWallet();
+    const [ tonConnectUI, setOptions] = useTonConnectUI();
+
+    const sendCollect = async () => {
+        let parsed_amount = (0.15 * 10**9)
+        let myTransaction: SendTransactionRequest = {
+            validUntil: Math.floor(Date.now() / 1000) + 600,
+            messages: [
+                {
+                    address: "kQBOOEI4T1E2Oq0dHWwGw3U_Tbix4nso6EzbPLEdcF7u9vaL",
+                    amount: parsed_amount.toString(),
+                    payload: "te6cckEBAQEADgAAGKQGYvQAAAAAAAAAAEtQRik="
+                }
+            ]
+        }
+        tonConnectUI.sendTransaction(myTransaction);
+    }
+
+    let button;
+    console.log(ability)
+    if (userFriendlyAddress == "") {
+        button = <InactiveButton>
+            <Link>Wallet not connected</Link>    
+        </InactiveButton>
+    } else  if (ability.b == false) {
+        button = <InactiveButton>
+            <Link>Try again later</Link>    
+        </InactiveButton>
+    } else if (ability.b == true) {
+        button = <Button onClick={() => sendCollect()}>
+            <Link>Collect</Link>    
+        </Button>
+    }
     return (
         <Container>
             <Gif src={Sticker} />
@@ -100,15 +167,13 @@ export const Block1 = () => {
                     Testnet Faucet
                 </MainText>
                 <Descriprion>
-                Tonlink Testnet Faucet is a faucet to get 
-                test stTON and TL to test Tonlink Network. 
-                The TL token is used to pay for the oracle 
-                and the stTON to test the delegation process.
+                Get testnet versions of $TL and $stTON* to test the Apollo 10 Tonlink Testnet
                 </Descriprion>
+                <DescriprionMini>
+                *not related to any liquid staking protocols
+                </DescriprionMini>
             </TextBlock>
-            <Button>
-                <Link>Collect</Link>    
-            </Button>
+            {button}
         </Container>
     )
 }
