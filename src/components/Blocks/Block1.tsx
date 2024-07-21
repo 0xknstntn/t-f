@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Sticker from '../../assets/Gif/Sticker 4.gif'
 import { useAbility } from "../../store/useAbility";
-import { SendTransactionRequest, useTonAddress, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import { SendTransactionRequest, useTonAddress, useTonConnectModal, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Container = styled.div`
     width: 100%;
@@ -127,6 +128,7 @@ export const Block1 = () => {
     const userFriendlyAddress = useTonAddress();
 	const wallet = useTonWallet();
     const [ tonConnectUI, setOptions] = useTonConnectUI();
+    const { state, open, close } = useTonConnectModal();
 
     const sendCollect = async () => {
         let parsed_amount = (0.15 * 10**9)
@@ -146,18 +148,23 @@ export const Block1 = () => {
     let button;
     console.log(ability)
     if (userFriendlyAddress == "") {
-        button = <InactiveButton>
-            <Link>Wallet not connected</Link>    
-        </InactiveButton>
-    } else  if (ability.b == false) {
+        button = <Button onClick={open}>
+            <Link>Connect your wallet</Link>    
+        </Button>
+    } else if (ability.act == "" ) {
+        button = <Button>
+            <Link><CircularProgress disableShrink size={22} color="inherit"/></Link>
+        </Button> 
+    } else if (ability.act == "ok" && ability.b == false) {
         button = <InactiveButton>
             <Link>Try again later</Link>    
         </InactiveButton>
-    } else if (ability.b == true) {
+    } else if (ability.act == "ok" && ability.b == true) {
         button = <Button onClick={() => sendCollect()}>
             <Link>Collect</Link>    
         </Button>
     }
+
     return (
         <Container>
             <Gif src={Sticker} />

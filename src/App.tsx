@@ -24,7 +24,7 @@ function App() {
         useEffect(() => {
             async function main() {
                 let b_new = await CheckAbility(userFriendlyAddress === undefined ? "" : userFriendlyAddress)
-                setAbility({b: b_new})
+                setAbility({act: "ok", b: b_new})
             }
             main()
     

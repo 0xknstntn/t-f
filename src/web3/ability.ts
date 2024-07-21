@@ -3,17 +3,15 @@ import { Address, TonClient, TupleBuilder, beginCell } from "ton";
 
 export async function CheckAbility(wallet: string): Promise<boolean> {
         try {
-                const endpoint = await getHttpEndpoint({
-                        network: 'testnet',
-                });
-                const client = new TonClient({ endpoint });
-                let info = (await client.runMethod(Address.parse("kQBOOEI4T1E2Oq0dHWwGw3U_Tbix4nso6EzbPLEdcF7u9vaL"), 'check_ability', [
-                        { type: 'slice', cell: beginCell().storeAddress(Address.parse(wallet)).endCell() },
-                ])).stack.readNumber();
-
-                return (info == -1 ? true : false)
+                let res = await (await fetch(`https://api.tonlink.network/api/api/v1/faucet/check?address=${wallet}`)).json()
+                console.log(`https://api.tonlink.network/api/api/v1/faucet/check?address=${wallet}`)
+                if (res.ok == "true") {
+                        return res.result.ability
+                } else {
+                        return false
+                }
         } catch (e) {
-                console.log(e)
+                console.error(e)
         }
         return false
 }
